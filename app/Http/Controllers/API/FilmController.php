@@ -55,21 +55,19 @@ class FilmController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
 
-        $photo = null;
+        $film = $request->all();
+
         if ($request->file('photo') != null) {
             $file = $request->file('photo');
             $extension = $file->getClientOriginalExtension();
             $filename = time() . '.' . $extension;
-            Storage::disk('local')->put('/storage/' . $filename,  File::get($file));
-            $photo = '/storage/' . $filename;
+            Storage::disk('local')->put('public/' . $filename, File::get($file));
+            $film['photo'] = '/storage/' . $filename;
         }
 
-        $request->merge([
-            'genres' => json_decode($request->get('genres')),
-            'photo' => $photo
-        ]);
+        $film['genres'] = json_decode($request->get('genres'));
 
-        $film = Film::query()->create($request->all());
+        $film = Film::query()->create($film);
 
         return response()->json($film);
     }
