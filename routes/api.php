@@ -13,7 +13,14 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::apiResource('films', \App\Http\Controllers\API\FilmController::class)->only(['index', 'show']);
+Route::post('login', [\App\Http\Controllers\API\PassportController::class,'login']);
+Route::post('register', [\App\Http\Controllers\API\PassportController::class,'register']);
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware(['auth:api'])->get('user', [\App\Http\Controllers\API\PassportController::class,'getAuthenticatedUser']);
+Route::middleware(['auth:api'])->post('comment', [\App\Http\Controllers\API\CommentController::class,'store']);
+Route::middleware(['auth:api'])->post('films', [\App\Http\Controllers\API\FilmController::class,'store']);
+
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
